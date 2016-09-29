@@ -3,7 +3,10 @@
 ### Example user template
 
 # IntelliJ project files
+.idea/*
+.idea/*.xml
 .idea/
+.idea
 *.iml
 out
 gen
