@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>miniSlider z asynchronicznym ładowaniem zdjęć</title>
+    <link rel="stylesheet" href="./styles/bootstrap.min.css">
+    <style>
+        body {
+            background: #FDFDFD;
+        }
+        .img-content {
+            position: relative;
+            min-width: 100%;
+            min-height: 180px;
+        }
+        .img-content img {
+            min-width: 100%;
+        }
+        .img-content .img-text {
+            position: absolute;
+            width: 100%;
+            bottom: 0px;
+            background: rgba(0,0,0,0.5);
+            text-align: center;
+            color: #FEFEFE;
+            padding-top: 4px;
+            padding-bottom: 4px;
+        }
+    </style>
+</head>
+<body class="container">
+
+    <div class="row">
+        <div class="col-sm-4 col-sm-offset-4">
+            <ul class="img-control pager">
+                <li class="previous"><a href="#">&larr; Wstecz</a></li>
+                <li class="next"><a href="#">Dalej &rarr;</a></li>
+                <li><span class="img-index">0</span> <b>/</b> <span class="img-count">0</span></li>
+            </ul>
+            <div class="img-content ">
+                <img src="images/loader.gif" class="img-responsive" />
+                <div class="img-text"></div>
+            </div>
+            <label for="imgsrc">Link do zdjęcia:</label>
+            <input id="imgsrc" class="img-input-src form-control" type="text" readonly />
+        </div>
+    </div>
+
+
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <script>
+        var imageSwitch = (function(){
+            "use strict";
+
+            /**
+             * Tablica ze zdjęciami
+             * @type {Array}
+             */
+            var images = [];
+
+            /**
+             * Zlicza ilość zdjęć
+             * @type {number}
+             */
+            var countImg = 0;
+
+            /**
+             * Index wyświetlanego zdjęcia
+             * @type {number}
+             */
+            var indexImg = 1;
+
+            /**
+             * Funkcja ładuje zdjecie z parametrami
+             * @param __index
+             */
+            function loadImage(__index){
+                images.forEach(function(img, index){
+                    if(index == __index - 1){
+
+                        // Ładowanie zdjęcia oraz atrybutu alt
+                        $('.img-content > img')
+                                .attr('src', img.src)
+                                .attr('alt', img.alt);
+
+                        // Ustawia opis zdjęcia
+                        $('.img-content > .img-text').text(img.text);
+
+                        // W polu input wyświetla link do zdjęcia
+                        $('.img-input-src').val(img.src);
+                    }
+                });
+            }
+            function changeStatus(){
+                $('.img-control .img-index').text(indexImg);
+                $('.img-control .img-count').text(countImg);
+
+                $('.img-content > img').attr('src', 'images/loader.gif');
+                $('.img-content > .img-text').empty();
+                $('.img-input-src').val('');
+            }
+
+            var actions = {
+                /**
+                 * Funkcja obsługuje cofnięcie zdjęcia
+                 */
+                previous : function(){
+                    if(indexImg > 1 && indexImg <= countImg){
+                        indexImg --;
+                    } else {
+                        indexImg = countImg;
+                    }
+
+                    changeStatus();
+                    loadImage(indexImg);
+                },
+
+                /**
+                 * Funkcja obsługuje wywołanie następnego zdjęcia
+                 */
+                next : function(){
+                    if(countImg >= 1) {
+                        if (indexImg < countImg) {
+                            indexImg++;
+                        }
+                        else {
+                            indexImg = 1;
+                        }
+                    }
+
+                    changeStatus();
+                    loadImage(indexImg);
+                }
+            };
+
+
+            /**
+             * Głowna funkcja do przekazania zdjęć oraz wywołania imageSwitch
+             */
+            function init(img){
+                images = img;
+                countImg = img.length;
+                indexImg = (countImg > 0) ?  1 : countImg;
+
+                changeStatus();
+                loadImage(1);
+
+                // Przypisanie funkcji wstecz oraz dalej dla akcji w JQ click
+                $('.img-control .previous').click(actions.previous);
+                $('.img-control .next').click(actions.next);
+            }
+
+            return {
+                init: init
+            }
+        })();
+
+        $(function(){
+
+            var x = [
+                {
+                    src: "images/zdj-1.jpeg",
+                    alt: "Alt zdjęcia 1",
+                    text: "Zdjęcie z dysku 1"
+                },
+                {
+                    src: "images/zdj-2.jpeg",
+                    alt: "Alt zdjęcia 2",
+                    text: "Zdjęcie z dysku 2"
+                },
+                {
+                    src: "images/zdj-3.jpeg",
+                    alt: "Alt zdjęcia 3",
+                    text: "Zdjęcie z dysku 3"
+                },
+                {
+                    src: "images/zdj-4.jpeg",
+                    alt: "Alt zdjęcia 4",
+                    text: "Zdjęcie z dysku 4"
+                },
+                {
+                    src: "images/zdj-5.jpeg",
+                    alt: "Alt zdjęcia 5",
+                    text: "Zdjęcie z dysku 5"
+                }
+            ];
+
+
+            imageSwitch.init(x);
+
+        });
+    </script>
+</body>
+</html>
