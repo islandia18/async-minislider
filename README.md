@@ -17,6 +17,7 @@ Ta wersja na potrzeby poradnika jest okrojona z funkcjonalności.
 **Autor** Patryk Pieniak
 
 **Strona autora** http://ipatryk.pl
+**Demo** http://ipatryk.pl/demo/async-minislider
 
 Kontaktować można się pod adresem email _pieniak@ipatryk.pl_
 
